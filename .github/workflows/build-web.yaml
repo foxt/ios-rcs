@@ -1,0 +1,32 @@
+name: BuildWeb
+on: 
+ push:
+ schedule:
+    - cron: '59 18 * * *'
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build-web:
+    environment:
+        name: github-pages
+        url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup Pages
+      uses: actions/configure-pages@v5
+    - uses: oven-sh/setup-bun@v2
+    - run: bun install
+    - run: bun run ./carrierbundles.ts
+    - run: bun run ./buildHtml.tsx
+    - uses: actions/upload-artifact@v2
+      with:
+        path: html
+    - uses: actions/deploy-pages@v4
+
+    
+    
