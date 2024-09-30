@@ -3,3 +3,6 @@ processed.json
 *.xml
 node_modules/
 .DS_Store
+carrier-bundles/*/*/*
+!carrier.plist
+!Info.plist
