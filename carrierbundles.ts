@@ -10,9 +10,10 @@ import type CarrierPlist from "./types/carrier.plist.d.ts";
 import type { CarrierBundleSimple, iTunesUpdate } from "./types/versions.d.ts";
 
 
-const LocalDirs = [
-    '/Volumes/Crystal22A3354.D84OS/System/Library/Carrier Bundles/iPhone/'
-]
+const LocalDirs  = 
+    fs.readdirSync(Path.join(__dirname, 'carrier-bundles'))
+    .map(a => Path.join(__dirname, 'carrier-bundles', a))
+    .filter(a => fs.lstatSync(a).isDirectory());
 
 
 async function getOnlineCarrierBundles() {
@@ -124,10 +125,7 @@ for (var [carrier,OsVersions] of Object.entries(ocb.MobileDeviceCarrierBundlesBy
 
     // compare to local version
     let lastVersion = networks[carrier]?.version ?? "0.0.0";
-    if (dottedCompare(latest.BuildVersion, lastVersion) >= 0) {
-        console.log("Skipping", carrier, latest.BuildVersion, "already have", lastVersion);
-        continue;
-    }
+    if (dottedCompare(latest.BuildVersion, lastVersion) >= 0) continue;
     console.log("Downloading", carrier, latest.BuildVersion, latest.BundleURL);
     let cb = await getCarrierBundle(latest.BundleURL);
     if (!cb) {
