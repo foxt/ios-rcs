@@ -1,7 +1,7 @@
 import bplist from "bplist-parser";
-import { $ } from 'bun';
 import fs from 'fs';
 import Path from 'path';
+import plist from "plist";
 
 import JSZip from "jszip";
 import { CountryCodes, ReverseCountryCodes } from "./countries.ts";
@@ -18,9 +18,8 @@ const LocalDirs  =
 
 async function getOnlineCarrierBundles() {
     let text = await fetch('https://s.mzstatic.com/version').then(t => t.text())
-    let replaced = text.replace(/<data>/g, "<string>").replace(/<\/data>/g, "</string>");
-    const json = await $`cat < ${Buffer.from(replaced)} | plutil -convert json -o - -`.json();
-    return json as iTunesUpdate;
+    let parse = plist.parse(text);
+    return parse as any as iTunesUpdate;
 }
 
 async function getCarrierBundle(url: string) {
