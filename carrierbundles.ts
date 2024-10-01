@@ -89,7 +89,7 @@ function setNetwork(source: string, id: string, version: string, data: CarrierPl
                 o?.OverrideConfiguration?.CarrierName,
                 o?.OverrideConfiguration?.StatusBarImages?.map((a: any) => a.StatusBarCarrierName || a.CarrierName),
             ]),
-            data.StockSymboli?.map(a => a.name),
+            // data.StockSymboli?.map(a => a.name),
         ].flat(9999).map(n => 
             // n?.replace(new RegExp(countryCode + "$",'i'), "")
             n?.replace(new RegExp(countryName + "$",'i'), "")
