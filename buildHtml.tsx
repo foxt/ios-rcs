@@ -1,11 +1,14 @@
 import { readFileSync, writeFileSync } from "fs";
 import { transform } from "lightningcss";
-import * as preact from "preact";
+import { h } from "preact";
 import renderToString from "preact-render-to-string";
 import { getCountryFlag } from "./countries.ts";
 import processed from "./processed.json";
 import type { CarrierPlist } from "./types/carrier.plist";
-const { Fragment, h } = preact;
+
+// for some reason this is required otherwise bun on CI will throw 'Can't find variable: Fragment'
+import * as preact from "preact";
+const { Fragment } = preact;
 
 let carriers = processed as Record<string, { source: string, version: string, names: string[], country?: string, countryCode: string, data: CarrierPlist }>;
 
@@ -48,7 +51,6 @@ const CarrierSupportTable = () => {
     </>))}</div>
 
 }
-console.log({Fragment});
 let html = renderToString(<>
     <head>
         <title>Does My Carrier Support RCS on iOS Yet?</title>
