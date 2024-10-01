@@ -75,6 +75,7 @@ let html = renderToString(<>
                 <p>
                     <a href="https://support.apple.com/en-us/109526" target="_blank">Apple provided</a> a list of what features each carrier supports... but only listed RCS support for US/CA carriers. <b>This is a list of all of them.</b>
                 </p>
+                <h2>Last updated: {new Date().toDateString()}</h2>
             </header>
             <CarrierSupportTable />
         </div>
