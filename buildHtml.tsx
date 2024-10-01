@@ -42,18 +42,25 @@ const CarrierSupportTable = () => {
     return <div class='countries'>{entries.map(([country, carriers]) => (country !== "🌐 Worldwide" && <>
         <h2>{country}</h2>
         <div class='carriers'>
-            {carriers?.map(([id, data]) => <div class='carrier' data-supports={rcsStatus(data)}>
-                <div class='header'>
-                    <h3>{data.names[0]}</h3>
-                    <span class='emoji'>{['❌','⏳' ,'✅'][rcsStatus(data)]}</span>
+            {carriers?.map(([id, data]) => {
+                let url = data.data.CarrierBookmarks?.at(-1)?.URL || data.data.MyAccountURL || data.data.TetheringURL;
+                return <div class='carrier' data-supports={rcsStatus(data)}>
+                    <div class='header'>
+                        
+                        <h3>
+                            {url && <img width={23} height={23} src={`https://www.google.com/s2/favicons?domain=${encodeURIComponent(url)}&sz=32`}/>}
+                            {data.names[0]}
+                        </h3>
+                        <span class='emoji'>{['❌','⏳' ,'✅'][rcsStatus(data)]}</span>
+                    </div>
+                    {data.names.length > 1 && <p class='aka'>aka. {data.names.slice(1).join(", ")}</p>}
+                    {data.data.RCS && (
+                        data.source.includes("DeveloperOS") ? "in beta" :
+                        data.source.startsWith("https") ? <a target="_blank" href="https://support.apple.com/en-us/109324">delivered OTA</a> : "")}
+                    <div class='grow'></div>
+                    <p class='id'>{id} {data.version}</p>
                 </div>
-                {data.names.length > 1 && <p class='aka'>aka. {data.names.slice(1).join(", ")}</p>}
-                {data.data.RCS && (
-                    data.source.includes("DeveloperOS") ? "in beta" :
-                    data.source.startsWith("https") ? <a target="_blank" href="https://support.apple.com/en-us/109324">delivered OTA</a> : "")}
-                <div class='grow'></div>
-                <p class='id'>{id} {data.version}</p>
-            </div>)}
+            })}
         </div>
     </>))}</div>
 
