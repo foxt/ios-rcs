@@ -53,7 +53,8 @@ export const CountryCodes = {
     'US': 'United States',
     'VE': 'Venezuela',
     'VI': 'U.S. Virgin Islands',
-    'WI': 'Worldwide'
+    'WI': 'Worldwide',
+    'YT': 'Mayotte',
 } as Record<string,string>;
 
 export const ReverseCountryCodes = Object.fromEntries(Object.entries(CountryCodes).map(([a,b]) => [b,a]));
