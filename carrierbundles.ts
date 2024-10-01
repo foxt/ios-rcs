@@ -9,11 +9,7 @@ import type { CarrierBundleInfo } from "./types/Info.plist";
 import type CarrierPlist from "./types/carrier.plist.d.ts";
 import type { CarrierBundleSimple, iTunesUpdate } from "./types/versions.d.ts";
 
-
-const LocalDirs  = 
-    fs.readdirSync(Path.join(__dirname, 'carrier-bundles'))
-    .map(a => Path.join(__dirname, 'carrier-bundles', a))
-    .filter(a => fs.lstatSync(a).isDirectory());
+    
 
 
 async function getOnlineCarrierBundles() {
@@ -78,6 +74,7 @@ function setNetwork(source: string, id: string, version: string, data: CarrierPl
     let countryName = data.HomeBundleIdentifier?.split('.').pop()!.replace(/([a-z])([A-Z])/g, '$1 $2');
     if (countryCode.length !== 2) countryCode = ReverseCountryCodes[countryName || ""];
     if (countryCode) countryCode = countryCode.toUpperCase();
+    if (networks[id] && networks[id].data.RCS) return;
     networks[id] = {
         source, version,
         names: dedup([
@@ -102,9 +99,8 @@ function setNetwork(source: string, id: string, version: string, data: CarrierPl
     }
 }
 
-
-for (let dir of LocalDirs) {
-    if (!fs.existsSync(dir)) continue;
+function doLocal(dir: string) {
+    dir = Path.join(__dirname, 'carrier-bundles', dir);
     let dirs = fs.readdirSync(dir);
     for (let d of dirs) {
         let path = Path.join(dir, d);
@@ -118,30 +114,36 @@ for (let dir of LocalDirs) {
     }
 }
 
-let ocb = await getOnlineCarrierBundles();
-for (var [carrier,OsVersions] of Object.entries(ocb.MobileDeviceCarrierBundlesByProductVersion)) {
-    // find latest version
-    let vers: CarrierBundleSimple[] = [];
-    for (var [osversion, version] of Object.entries(OsVersions)) 
-        if (version.BuildVersion) 
-            vers.push(version);
-    vers.sort((a, b) => dottedCompare(a.BuildVersion, b.BuildVersion));
-    let latest = vers[0];
-    if (!latest) continue;
+async function doOnline() {
+    let ocb = await getOnlineCarrierBundles();
+    for (var [carrier,OsVersions] of Object.entries(ocb.MobileDeviceCarrierBundlesByProductVersion)) {
+        // find latest version
+        let vers: CarrierBundleSimple[] = [];
+        for (var [osversion, version] of Object.entries(OsVersions)) 
+            if (version.BuildVersion) 
+                vers.push(version);
+        vers.sort((a, b) => dottedCompare(a.BuildVersion, b.BuildVersion));
+        let latest = vers[0];
+        if (!latest) continue;
 
-    // compare to local version
-    let lastVersion = networks[carrier]?.version ?? "0.0.0";
-    if (dottedCompare(latest.BuildVersion, lastVersion) >= 0) continue;
-    console.log("Downloading", carrier, latest.BuildVersion, latest.BundleURL);
-    let cb = await getCarrierBundle(latest.BundleURL);
-    if (!cb) {
-        console.warn(`Failed to fetch ${latest.BundleURL}`);
-        continue;
+        // compare to local version
+        let lastVersion = networks[carrier]?.version ?? "0.0.0";
+        if (dottedCompare(latest.BuildVersion, lastVersion) >= 0) continue;
+        console.log("Downloading", carrier, latest.BuildVersion, latest.BundleURL);
+        let cb = await getCarrierBundle(latest.BundleURL);
+        if (!cb) {
+            console.warn(`Failed to fetch ${latest.BundleURL}`);
+            continue;
+        }
+        let parsed = bplist.parseBuffer(cb)[0] as CarrierPlist.CarrierPlist;
+        setNetwork(latest.BundleURL, carrier, latest.BuildVersion, parsed);
+
+
     }
-    let parsed = bplist.parseBuffer(cb)[0] as CarrierPlist.CarrierPlist;
-    setNetwork(latest.BundleURL, carrier, latest.BuildVersion, parsed);
-
-
 }
+
+doLocal('Crystal22A3354.D84OS')
+await doOnline();
+doLocal('CrystalBSeed22B5054e.D94DeveloperOS')
 
 fs.writeFileSync(Path.join(__dirname, 'processed.json'), JSON.stringify(networks, null, 2));
