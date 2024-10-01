@@ -25,6 +25,7 @@ jobs:
     - run: bun run ./buildHtml.tsx
     - uses: actions/upload-artifact@v3
       with:
+        name: github-pages
         path: html
     - uses: actions/deploy-pages@v4
 
