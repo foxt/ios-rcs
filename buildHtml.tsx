@@ -47,7 +47,7 @@ const CarrierSupportTable = () => {
     </>))}</div>
 
 }
-import { Fragment, h } from "preact";
+console.log({Fragment});
 let html = renderToString(<>
     <head>
         <title>Does My Carrier Support RCS on iOS Yet?</title>
