@@ -1,6 +1,6 @@
 import { readFileSync, writeFileSync } from "fs";
 import { transform } from "lightningcss";
-import preact from "preact";
+import * as preact from "preact";
 import renderToString from "preact-render-to-string";
 import { getCountryFlag } from "./countries.ts";
 import processed from "./processed.json";
