@@ -23,7 +23,7 @@ jobs:
     - run: bun install
     - run: bun run ./carrierbundles.ts
     - run: bun run ./buildHtml.tsx
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
         name: github-pages
         path: html
