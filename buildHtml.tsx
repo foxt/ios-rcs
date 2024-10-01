@@ -73,7 +73,7 @@ let html = renderToString(<>
             <header>
                 <h1>Does My Carrier Support RCS on iOS Yet?</h1>
                 <p>
-                    <a href="https://support.apple.com/en-us/109526" target="_blank">Apple provided</a> a list of what features each carrier supports... but only on their US site.
+                    <a href="https://support.apple.com/en-us/109526" target="_blank">Apple provided</a> a list of what features each carrier supports... but only on their US/CA site.
                     <> </>&bull; <> </>
                     <a href='https://github.com/foxt/ios-rcs'>GitHub</a>
                 </p>
