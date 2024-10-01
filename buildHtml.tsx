@@ -12,8 +12,6 @@ const { Fragment } = preact;
 
 let carriers = processed as Record<string, { source: string, version: string, names: string[], country?: string, countryCode: string, data: CarrierPlist }>;
 
-let rcsStatus = (data: typeof carriers[string]) => data.data.RCS ? (data.source.includes("DeveloperOS") ? 1 : 2) : 0;
-
 const CarrierSupportTable = () => { 
     let sorted = Object.entries(carriers).filter(([_, {version}]) => {
         let [major] = version.split('.').map(Number);
@@ -23,10 +21,8 @@ const CarrierSupportTable = () => {
         let bCountry = bData.country ?? bData.countryCode ?? "ZZ";
         let countryCompare = aCountry.localeCompare(bCountry);
         if (countryCompare !== 0) return countryCompare;
-        
-        const aRCS = rcsStatus(aData);
-        const bRCS = rcsStatus(bData);
-        if (aRCS !== bRCS) return bRCS - aRCS;
+        if (aData.data.RCS && !bData.data.RCS) return -1;
+        if (!aData.data.RCS && bData.data.RCS) return 1;
 
         let aName = aData.names[0] || aId;
         let bName = bData.names[0] || bId;
@@ -38,17 +34,16 @@ const CarrierSupportTable = () => {
         (bCarriers?.filter(([id, data]) => data.data.RCS).length ?? 0) -
         (aCarriers?.filter(([id, data]) => data.data.RCS).length ?? 0) 
     );
-    
+
     return <div class='countries'>{entries.map(([country, carriers]) => (country !== "🌐 Worldwide" && <>
         <h2>{country}</h2>
         <div class='carriers'>
-            {carriers?.map(([id, data]) => <div class='carrier' data-supports={rcsStatus(data)}>
+            {carriers?.map(([id, data]) => <div class='carrier' data-supports={!!data.data.RCS}>
                 <div class='header'>
                     <h3>{data.names[0]}</h3>
-                    <span class='emoji'>{['❌','⏳' ,'✅'][rcsStatus(data)]}</span>
+                    <span class='emoji'>{data.data.RCS ? '✅' : '❌'}</span>
                 </div>
                 {data.names.length > 1 && <p class='aka'>aka. {data.names.slice(1).join(", ")}</p>}
-                {data.data.RCS && data.source.includes("DeveloperOS") ? "coming in 18.1": ""}
                 <div class='grow'></div>
                 <p class='id'>{id} {data.version}</p>
             </div>)}
@@ -63,7 +58,7 @@ let html = renderToString(<>
         <meta name="description" content="A list of carriers that support RCS on iOS" />
         <style dangerouslySetInnerHTML={{__html: transform({
                 filename: "index.css",
-                code: readFileSync("./html/index.css"), 
+                code: readFileSync("./html/index.css"),
                 minify: true,
                 sourceMap: false,
                 targets: {

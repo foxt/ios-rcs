@@ -13,8 +13,6 @@
     --grey-900: light-dark(#111827, #f3f4f6);
     --green-200: light-dark(#bbf7d0, #166534);
     --green-700: light-dark(#15803d, #bbf7d0);
-    --orange-200: light-dark(#fed7aa, #b45309);
-    --orange-700: light-dark(#b45309, #fed7aa);
 }
 
 body {
@@ -64,18 +62,14 @@ body {
                     color: var(--grey-500);
                     font-size: 0.8rem;
                 }
-                &:not([data-supports="0"]) {
+                &[data-supports="true"] {
                     border-color: transparent;
                     background-image: 
-                        radial-gradient(circle at top right, var(--orange-200) 0%, var(--grey-200) 100%),
-                        radial-gradient(circle at top right, #b45309 0%, var(--grey-400) 100%);
+                        radial-gradient(circle at top right, var(--green-200) 0%, var(--grey-200) 100%),
+                        radial-gradient(circle at top right, #15803d 0%, var(--grey-400) 100%);
                     background-origin: border-box;
                     background-clip: padding-box, border-box;
-                    &[data-supports="2"] {
-                        background-image: 
-                            radial-gradient(circle at top right, var(--green-200) 0%, var(--grey-200) 100%),
-                            radial-gradient(circle at top right, #166534 0%, var(--grey-400) 100%);
-                    }
+
                 }
             }
         }

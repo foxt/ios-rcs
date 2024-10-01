@@ -10,10 +10,10 @@ import type CarrierPlist from "./types/carrier.plist.d.ts";
 import type { CarrierBundleSimple, iTunesUpdate } from "./types/versions.d.ts";
 
 
-const LocalDirs  = [
-    "Crystal22A3354.D84OS",
-    "CrystalBSeed22B5054e.D94DeveloperOS"
-].map(a => Path.join(__dirname, 'carrier-bundles', a)).filter(a => fs.lstatSync(a).isDirectory());
+const LocalDirs  = 
+    fs.readdirSync(Path.join(__dirname, 'carrier-bundles'))
+    .map(a => Path.join(__dirname, 'carrier-bundles', a))
+    .filter(a => fs.lstatSync(a).isDirectory());
 
 
 async function getOnlineCarrierBundles() {
@@ -78,10 +78,6 @@ function setNetwork(source: string, id: string, version: string, data: CarrierPl
     let countryName = data.HomeBundleIdentifier?.split('.').pop()!.replace(/([a-z])([A-Z])/g, '$1 $2');
     if (countryCode.length !== 2) countryCode = ReverseCountryCodes[countryName || ""];
     if (countryCode) countryCode = countryCode.toUpperCase();
-    if (networks[id] && networks[id].data.RCS) {
-        console.log("Skipping", id, "already has RCS", networks[id].source, source);
-        return;
-    };
     networks[id] = {
         source, version,
         names: dedup([
