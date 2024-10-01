@@ -1,10 +1,11 @@
 import { readFileSync, writeFileSync } from "fs";
 import { transform } from "lightningcss";
-import { Fragment, h } from "preact";
+import preact from "preact";
 import renderToString from "preact-render-to-string";
 import { getCountryFlag } from "./countries.ts";
 import processed from "./processed.json";
 import type { CarrierPlist } from "./types/carrier.plist";
+const { Fragment, h } = preact;
 
 let carriers = processed as Record<string, { source: string, version: string, names: string[], country?: string, countryCode: string, data: CarrierPlist }>;
 
