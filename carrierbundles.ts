@@ -81,9 +81,15 @@ function setNetwork(source: string, id: string, version: string, data: CarrierPl
     networks[id] = {
         source, version,
         names: dedup([
-            ...(data.StatusBarImages?.map(a => a.StatusBarCarrierName || a.CarrierName) || []),
+            data.StatusBarImages?.map(a => a.StatusBarCarrierName || a.CarrierName) || [],
+            data.MVNOOverrides?.StatusBarImages?.map(i => i.CarrierName),
+            Object.values(data.MVNOOverrides || {}).map((o: any) => [
+                o?.OverrideConfiguration?.OverrideOperatorName,
+                o?.OverrideConfiguration?.CarrierName,
+                o?.OverrideConfiguration?.StatusBarImages?.map((a: any) => a.StatusBarCarrierName || a.CarrierName),
+            ]),
             data.CarrierName
-        ].map(n => 
+        ].flat(9999).map(n => 
             // n?.replace(new RegExp(countryCode + "$",'i'), "")
             n?.replace(new RegExp(countryName + "$",'i'), "")
             .trim()
