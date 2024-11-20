@@ -144,6 +144,6 @@ async function doOnline() {
 
 doLocal('CrystalB22B83.D94OS')
 await doOnline();
-doLocal('CrystalSeedUpdate22C5109p.D94DeveloperOS')
+doLocal('CrystalCSeed22C5142a.D94DeveloperOS')
 
 fs.writeFileSync(Path.join(__dirname, 'processed.json'), JSON.stringify(networks, null, 2));
