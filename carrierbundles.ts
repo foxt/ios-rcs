@@ -142,8 +142,7 @@ async function doOnline() {
     }
 }
 
-doLocal('CrystalB22B91.D94OS')
+doLocal('18.2-CrystalB22B91.D94OS')
 await doOnline();
-doLocal('CrystalCSeed22C5142a.D94DeveloperOS')
 
 fs.writeFileSync(Path.join(__dirname, 'processed.json'), JSON.stringify(networks, null, 2));
